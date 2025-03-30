@@ -2,6 +2,9 @@
 
 🔧my settings on mostly linux(ubuntu) and window
 
+## First, install homebrew
+(homebrew)[https://brew.sh/]
+
 ## 📂 Recommended Repository Structure
 
 ```sh
