@@ -3,6 +3,7 @@
 🔧my settings on mostly linux(ubuntu) and window
 
 ## First, install homebrew
+
 [homebrew](https://brew.sh/)
 
 ## 📂 Recommended Repository Structure
@@ -23,12 +24,14 @@ dotfiles/
 ├── README.md         # Instruções claras
 └── LICENSE           # Licença (MIT é popular)
 ```
+
 ## ✨ Key Features to Implement
+
 - Crie um script (bootstrap.sh ou install.sh) que:
 
-    - Cria symlinks das configs para ~/.config ou ~/.
+  - Cria symlinks das configs para ~/.config ou ~/.
 
-    - Instala dependências (ex.: zsh, tmux, neovim).
+  - Instala dependências (ex.: zsh, tmux, neovim).
 
 - Exemplo simplificado:
 
@@ -39,6 +42,7 @@ ln -sf ~/dotfiles/.config/nvim ~/.config/nvim
 ```
 
 ## Suporte Multi-OS
+
 - Adicione verificações no script para diferenciar Linux/macOS:
 
 ```sh
@@ -50,6 +54,7 @@ fi
 ```
 
 ## Gestão de Secrets
+
 - Use um arquivo `.secrets` (adicionado ao `.gitignore`) para variáveis sensíveis:
 
 ```sh
@@ -58,17 +63,26 @@ fi
 ```
 
 ## Plugins e Temas
+
 - Inclua submodules Git para gerenciar plugins (ex.: Oh My Zsh, TMUX Plugin Manager).
 
 ## 💡 Dicas Extras
+
 - Use GNU Stow, Ferramenta para gerenciar symlinks automaticamente:
 
 ```sh
 stow -v zsh git   # Cria links para configs de zsh e git
 ```
 
+- run .sh, example:
+
+```sh
+shchmod +x brew-all-in-one.sh
+./brew-all-in-one.sh
+```
+
 - Versionamento Seletivo
-Não versione tudo (ex.: evite histórico de plugins baixados).
+  Não versione tudo (ex.: evite histórico de plugins baixados).
 
 - Backup de Fontes e Cores
-Inclua seu tema de terminal (.itermcolors, .Xresources).
+  Inclua seu tema de terminal (.itermcolors, .Xresources).
