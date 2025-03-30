@@ -122,3 +122,8 @@ export NVM_DIR="$HOME/.nvm"
 . "$HOME/.cargo/env"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# load custom functions
+if [ -f ~/.functions ]; then
+    . ~/.functions
+fi

@@ -81,6 +81,12 @@ shchmod +x brew-all-in-one.sh
 ./brew-all-in-one.sh
 ```
 
+- execute .bashrc
+
+```sh
+source ~/.bashrc
+```
+
 - Versionamento Seletivo
   Não versione tudo (ex.: evite histórico de plugins baixados).
 
