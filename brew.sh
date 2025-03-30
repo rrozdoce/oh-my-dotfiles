@@ -1,101 +1,125 @@
 #!/usr/bin/env bash
 
-# Install command-line tools using Homebrew.
 
-# Make sure we’re using the latest Homebrew.
+
+# Verify if homebrew is already installed
+if ! command -v brew &> /dev/null; then
+    echo "---------------- 🍺 All-in-One Script with homebrew ----------------"
+    echo "Instalando o Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    # Configure homebrew on PATH(for ubuntu)
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+    source ~/.bashrc
+else
+    echo "Homebrew já está instalado. Atualizando..."
+fi
+
+# Update Homebrew and installed packages
 brew update
-
-# Upgrade any already-installed formulae.
 brew upgrade
 
-# Save Homebrew’s installed location.
-BREW_PREFIX=$(brew --prefix)
+# Install useful extra tools
+brew install \
+    coreutils \
+    moreutils \
+    findutils \
+    gnu-sed \
+    wget \
+    curl \
+    gnupg \
+    vim \
+    git \
+    git-lfs \
+    openssh \
+    screen \
+    htop \
+    tree \
+    p7zip \
+    unzip \
+    rlwrap \
+    lynx \
+    imagemagick \
+    ffmpeg \
+    pv \
+    pigz \
+    rename \
+    socat \
+    nmap \
+    tcpdump \
+    hydra \
+    aircrack-ng \
+    sqlmap \
+    john \
+    binutils \
+    binwalk \
+    lua \
+    php \
+    python \
+    neofetch
 
-# Install GNU core utilities (those that come with macOS are outdated).
-# Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
-brew install coreutils
-ln -s "${BREW_PREFIX}/bin/gsha256sum" "${BREW_PREFIX}/bin/sha256sum"
+# Security Tools and CTF (Optional)
+brew install \
+    exiftool \
+    steghide \
+    foremost \
+    fcrackzip \
+    pdfcrack \
+    wireshark \
+    tshark \
+    hexedit
 
-# Install some other useful utilities like `sponge`.
-brew install moreutils
-# Install GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed.
-brew install findutils
-# Install GNU `sed`, overwriting the built-in `sed`.
-brew install gnu-sed --with-default-names
-# Install a modern version of Bash.
-brew install bash
-brew install bash-completion2
+# Extras useful tools
+brew install \
+    neovim \        # Modern Editor
+    ripgrep \       # speed grep
+    bat \           # cat with syntax highlight
+    exa \           # modern ls
+    zoxide \        # smart cd
+    gh \            # CLI of Github
+    kubectl         # Kubernetes
 
-# Switch to using brew-installed bash as default shell
-if ! fgrep -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
-  echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
-  chsh -s "${BREW_PREFIX}/bin/bash";
-fi;
+# Install compilers and basics tools
+brew install \
+    gcc \           # GCC (with g++)
+    cmake \         # build tools
+    make \          # compiler manager
+    pkg-config      # help libs
 
-# Install `wget` with IRI support.
-brew install wget --with-iri
+# Configure autocomplete and oh-my-zsh in zsg/.zshrc
+brew install zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# Install GnuPG to enable PGP-signing commits.
-brew install gnupg
+# Install Rust (with Homebrew + rustup)
+brew install rustup-init
+rustup-init -y --no-modify-path
+source "$HOME/.cargo/env"
 
-# Install more recent versions of some macOS tools.
-brew install vim --with-override-system-vi
-brew install grep
-brew install openssh
-brew install screen
-brew install php
-brew install gmp
+# Install NVM(Node version manager) and Node.js LTS (with Homebrew)
+brew install nvm
+mkdir -p ~/.nvm
+echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+echo '[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"' >> ~/.bashrc
+source ~/.bashrc
+nvm install --lts
+nvm use --lts
 
-# Install font tools.
-brew tap bramstein/webfonttools
-brew install sfnt2woff
-brew install sfnt2woff-zopfli
-brew install woff2
+# Install Java (OpenJDK)
+brew install openjdk
+sudo ln -sfn /home/linuxbrew/.linuxbrew/opt/openjdk/libexec/openjdk.jdk /usr/lib/jvm/openjdk
 
-# Install some CTF tools; see https://github.com/ctfs/write-ups.
-brew install aircrack-ng
-brew install bfg
-brew install binutils
-brew install binwalk
-brew install cifer
-brew install dex2jar
-brew install dns2tcp
-brew install fcrackzip
-brew install foremost
-brew install hashpump
-brew install hydra
-brew install john
-brew install knock
-brew install netpbm
-brew install nmap
-brew install pngcheck
-brew install socat
-brew install sqlmap
-brew install tcpflow
-brew install tcpreplay
-brew install tcptrace
-brew install ucspi-tcp # `tcpserver` etc.
-brew install xpdf
-brew install xz
+echo "=== Versões instaladas ==="
 
-# Install other useful binaries.
-brew install ack
-#brew install exiv2
-brew install git
-brew install git-lfs
-brew install gs
-brew install imagemagick --with-webp
-brew install lua
-brew install lynx
-brew install p7zip
-brew install pigz
-brew install pv
-brew install rename
-brew install rlwrap
-brew install ssh-copy-id
-brew install tree
-brew install vbindiff
-brew install zopfli
+gcc --version
+g++ --version
+rustc --version
+nvm --version
+node --version
+java -version
+python3 --version
+pip3 --version
 
-# Remove outdated versions from the cellar.
+echo "✅ Stack dev and useful things installed with Homebrew!"
+
+# clean old packages
 brew cleanup
