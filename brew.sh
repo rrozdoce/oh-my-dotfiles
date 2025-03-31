@@ -94,12 +94,10 @@ echo "🔒 Installing security tools"
 # Security Tools and CTF (Optional)
 if ! brew install \
     exiftool \
-    steghide \
     foremost \
     fcrackzip \
     pdfcrack \
     wireshark \
-    tshark \
     hexedit; then
     echo "❌ Failed to install security tools!" >&2
     exit 1
@@ -113,7 +111,6 @@ if ! brew install \
     neovim \
     ripgrep \
     bat \
-    exa \
     zoxide \
     gh \
     kubectl; then
