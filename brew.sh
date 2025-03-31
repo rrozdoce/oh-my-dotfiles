@@ -3,26 +3,36 @@
 echo "---------------- 🍺 All-in-One Script with homebrew ----------------"
 
 # Verify if homebrew is already installed
-if ! command -v brew &> /dev/null; then 
-    echo "Instalando o Homebrew..."
+if ! command -v brew &>/dev/null; then 
+    echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     
-    # Configure homebrew on PATH(for ubuntu)
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
-    source ~/.bashrc
+    # Configure homebrew on PATH (for both Linux and macOS)
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+        source ~/.bashrc
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+        source ~/.zshrc
+    fi
 else
     echo "Homebrew is already installed. Updating..."
 fi
 
-# TODO: config homebrew 
-
 # Update Homebrew and installed packages
-brew update
-brew upgrade
+if ! brew update; then
+    echo "❌ Failed to update Homebrew!" >&2
+    exit 1
+fi
 
-echo "⚒️  Installing essential tools"
+if ! brew upgrade; then
+    echo "❌ Failed to upgrade packages!" >&2
+    exit 1
+fi
+
+echo "⚒️ Installing essential tools"
 # Install useful extra tools
-brew install \
+if ! brew install \
     coreutils \
     moreutils \
     findutils \
@@ -32,7 +42,6 @@ brew install \
     gnupg \
     vim \
     git \
-    git-lfs \
     openssh \
     screen \
     htop \
@@ -58,29 +67,28 @@ brew install \
     lua \
     php \
     python \
-    neofetch
-
-if ! brew install git; then
-    echo "❌ installing git Failed!" > &2
+    neofetch; then
+    echo "❌ Failed to install essential tools!" >&2
     exit 1
+fi
 
-brew install \
-    git-lfs \      # for big files
-    gh \           # official CLI of Github
-    # [...] (other packages)
+if ! brew install git-lfs; then
+    echo "❌ Failed to install git-lfs!" >&2
+    exit 1
+fi
 
-echo -e "\nconfiguring Git..."
+echo -e "\nConfiguring Git..."
 git config --global user.name "rrozdoce"
 git config --global user.email "felipefelipevilhalva@gmail.com"
 git config --global init.defaultBranch main
 git config --global pull.rebase true
-git config --global core.editor "nvim"  # default editor
+git config --global core.editor "nvim"
 
-echo "✅ essential tools installed"
+echo "✅ Essential tools installed"
 
 echo "🔒 Installing security tools"
 # Security Tools and CTF (Optional)
-brew install \
+if ! brew install \
     exiftool \
     steghide \
     foremost \
@@ -88,59 +96,86 @@ brew install \
     pdfcrack \
     wireshark \
     tshark \
-    hexedit
+    hexedit; then
+    echo "❌ Failed to install security tools!" >&2
+    exit 1
+fi
 
-echo "✅ security tools installed"
+echo "✅ Security tools installed"
 
-echo "📌 installing extras useful tools"
+echo "📌 Installing extras useful tools"
 # Extras useful tools
-brew install \
-    neovim \        # Modern Editor
-    ripgrep \       # speed grep
-    bat \           # cat with syntax highlight
-    exa \           # modern ls
-    zoxide \        # smart cd
-    gh \            # CLI of Github
-    kubectl         # Kubernetes
+if ! brew install \
+    neovim \
+    ripgrep \
+    bat \
+    exa \
+    zoxide \
+    gh \
+    kubectl; then
+    echo "❌ Failed to install extra tools!" >&2
+    exit 1
+fi
 
 echo "✅ Extras useful tools installed"
 
-echo "🖥️ installing compilers, programming languages and some dev tools"
+echo "🖥️ Installing compilers, programming languages and some dev tools"
 # Install compilers and basics tools
-brew install \
-    gcc \           # GCC (with g++)
-    cmake \         # build tools
-    make \          # compiler manager
-    pkg-config      # help libs
+if ! brew install \
+    gcc \
+    cmake \
+    make \
+    pkg-config; then
+    echo "❌ Failed to install compilers!" >&2
+    exit 1
+fi
 
-# Configure autocomplete and oh-my-zsh in zsg/.zshrc
-brew install zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+# Install and configure zsh
+if brew install zsh; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+else
+    echo "❌ Failed to install zsh!" >&2
+    exit 1
+fi
 
-# Install Rust (with Homebrew + rustup)
-brew install rustup-init
-rustup-init -y --no-modify-path
-source "$HOME/.cargo/env"
+# Install Rust
+if brew install rustup-init; then
+    rustup-init -y --no-modify-path
+    source "$HOME/.cargo/env"
+else
+    echo "❌ Failed to install rustup!" >&2
+    exit 1
+fi
 
-# Install NVM(Node version manager) and Node.js LTS (with Homebrew)
-brew install nvm
-mkdir -p ~/.nvm
-echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
-echo '[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"' >> ~/.bashrc
-source ~/.bashrc
-nvm install --lts
-nvm use --lts
+# Install Node.js via NVM
+if brew install nvm; then
+    mkdir -p ~/.nvm
+    echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+    echo '[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"' >> ~/.bashrc
+    source ~/.bashrc
+    nvm install --lts
+    nvm use --lts
+else
+    echo "❌ Failed to install nvm!" >&2
+    exit 1
+fi
 
-# Install Java (OpenJDK)
-brew install openjdk
-sudo ln -sfn /home/linuxbrew/.linuxbrew/opt/openjdk/libexec/openjdk.jdk /usr/lib/jvm/openjdk
-echo 'export JAVA_HOME="/home/linuxbrew/.linuxbrew/opt/openjdk"' >> ~/.bashrc
-echo "✅ sucess..."
+# Install Java
+if brew install openjdk; then
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        sudo ln -sfn /home/linuxbrew/.linuxbrew/opt/openjdk/libexec/openjdk.jdk /usr/lib/jvm/openjdk
+    fi
+    echo 'export JAVA_HOME="$(brew --prefix openjdk)"' >> ~/.bashrc
+else
+    echo "❌ Failed to install Java!" >&2
+    exit 1
+fi
 
-echo "=== installed versions ==="
+echo "✅ Stack dev and useful things installed with Homebrew!"
 
+echo "=== Installed versions ==="
 gcc --version | head -n1
-g++ --version
+g++ --version | head -n1
 rustc --version
 nvm --version
 node --version
@@ -149,13 +184,11 @@ python3 --version
 pip3 --version
 git --version
 
-echo "=== git configs ==="
+echo "=== Git configs ==="
 git config --list 
-
-echo "✅ Stack dev and useful things installed with Homebrew!"
 
 echo "=== Homebrew version ==="
 brew --version
 
-# clean old packages
+# Clean old packages
 brew cleanup
