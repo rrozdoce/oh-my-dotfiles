@@ -2,7 +2,7 @@
 
 🔧my settings on mostly linux(ubuntu) and window
 
-## First, install homebrew
+## Install homebrew
 
 [homebrew](https://brew.sh/)
 

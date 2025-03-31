@@ -2,6 +2,10 @@
 
 echo "---------------- 🍺 All-in-One Script with homebrew ----------------"
 
+#TODO - tem q baixar git antes do homebrew
+
+ulimit -n 1024
+
 # Verify if homebrew is already installed
 if ! command -v brew &>/dev/null; then 
     echo "Installing Homebrew..."
